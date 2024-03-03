@@ -1,0 +1,50 @@
+service: ganap
+
+custom:
+    projectName: ganap
+    serviceName: api
+    stage: ${opt:stage, self:provider.stage}
+    downloadable_forms: ${self:custom.stage}-${self:custom.projectName}-downloadable_forms
+    event_comments: ${self:custom.stage}-${self:custom.projectName}-event_comments
+    event_details: ${self:custom.stage}-${self:custom.projectName}-event_details
+    organizations: ${self:custom.stage}-${self:custom.projectName}-organizations
+    user_organization_mapping: ${self:custom.stage}-${self:custom.projectName}-user_organization_mapping
+    users: ${self:custom.stage}-${self:custom.projectName}-users
+
+    # pythonRequirements:
+    #     dockerizePip: non-linux
+    #     noDeploy:
+    #         - requests
+    #         - boto3
+    #         - botocore
+    #     layer:
+    #         name: ganap-${self:custom.stage}-python-requirements
+    #         compatibleRuntimes:
+    #             - python3.8
+    #     slim: true
+
+# package: ${file(resources/package.yml)}
+
+provider:
+    name: aws
+    runtime: python3.8
+    stage: dev
+    region: ap-southeast-1
+    memorySize: 3008
+    versionFunctions: false
+    timeout: 30
+    environment:
+        REGION: ${self:provider.region}
+        STAGE: ${self:custom.stage}
+    logs:
+        restApi: true
+
+resources:
+    - ${file(resources/dynamodb.yml)}
+
+functions:
+# - ${file(resources/api.yml)}
+
+plugins:
+    # - serverless-python-requirements
+    - serverless-iam-roles-per-function

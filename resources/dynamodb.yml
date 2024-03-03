@@ -1,0 +1,111 @@
+Resources:
+    DownloadableForms:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.downloadable_forms}
+            AttributeDefinitions:
+                - AttributeName: form_id
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: form_id
+                  KeyType: HASH
+            BillingMode: PAY_PER_REQUEST
+    EventComments:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.event_comments}
+            AttributeDefinitions:
+                - AttributeName: event_id
+                  AttributeType: S
+                - AttributeName: comment_id
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: event_id
+                  KeyType: HASH
+                - AttributeName: comment_id
+                  KeyType: RANGE
+            BillingMode: PAY_PER_REQUEST
+    EventDetails:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.event_details}
+            AttributeDefinitions:
+                - AttributeName: event_id
+                  AttributeType: S
+                - AttributeName: start_date
+                  AttributeType: S
+                - AttributeName: approval_status
+                  AttributeType: S
+                - AttributeName: event_created
+                  AttributeType: S
+                - AttributeName: end_date
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: event_id
+                  KeyType: HASH
+                - AttributeName: start_date
+                  KeyType: RANGE
+            BillingMode: PAY_PER_REQUEST
+            GlobalSecondaryIndexes:
+                - IndexName: ApprovalStatusIndex
+                  KeySchema:
+                      - AttributeName: approval_status
+                        KeyType: HASH
+                      - AttributeName: event_created
+                        KeyType: RANGE
+                  Projection:
+                      ProjectionType: ALL
+                - IndexName: AvailabilityIndex
+                  KeySchema:
+                      - AttributeName: start_date
+                        KeyType: HASH
+                      - AttributeName: end_date
+                        KeyType: RANGE
+                  Projection:
+                      ProjectionType: ALL
+    Organization:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.organizations}
+            AttributeDefinitions:
+                - AttributeName: organization_id
+                  AttributeType: S
+                - AttributeName: organization_email
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: organization_id
+                  KeyType: HASH
+            BillingMode: PAY_PER_REQUEST
+            GlobalSecondaryIndexes:
+                - IndexName: OrganizationEmailIndex
+                  KeySchema:
+                      - AttributeName: organization_email
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+    UserOrganizationMapping:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.user_organization_mapping}
+            AttributeDefinitions:
+                - AttributeName: email
+                  AttributeType: S
+                - AttributeName: organization_id
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: email
+                  KeyType: HASH
+                - AttributeName: organization_id
+                  KeyType: RANGE
+            BillingMode: PAY_PER_REQUEST
+    UserId:
+        Type: AWS::DynamoDB::Table
+        Properties:
+            TableName: ${self:custom.users}
+            AttributeDefinitions:
+                - AttributeName: user_id
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: user_id
+                  KeyType: HASH
+            BillingMode: PAY_PER_REQUEST
